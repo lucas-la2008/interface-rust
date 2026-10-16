@@ -1,26 +1,25 @@
-use nalgebra_glm as glm;
-use glm::Mat4;
-use std::{
-    ffi::c_void,
-    mem::size_of
-};
+mod renderer_init;
 
-struct ElementData{
-    size_x:f32,
-    size_y:f32,
-    position_x:f32,
-    position_y:f32,
-    color_x:f32,
-    color_y:f32,
-    color_z:f32,
-    color_a:f32,
-    border_color_x:f32,
-    border_color_y:f32,
-    border_color_z:f32,
-    border_color_a:f32,
-    border_size:f32,
+use glm::Mat4;
+use nalgebra_glm as glm;
+
+pub struct ElementData {
+    size_x: f32,
+    size_y: f32,
+    position_x: f32,
+    position_y: f32,
+    color_x: f32,
+    color_y: f32,
+    color_z: f32,
+    color_a: f32,
+    border_color_x: f32,
+    border_color_y: f32,
+    border_color_z: f32,
+    border_color_a: f32,
+    border_size: f32,
 }
 
+pub const ELEMENT_DATA_SIZE: i32 = size_of::<ElementData>() as i32;
 
 pub struct Renderer {
     quad_vbo: u32,
@@ -55,45 +54,10 @@ impl Renderer {
             projection_location: 0,
             elements_count: 0,
             quad_vertices: [
-                0.0f32, 0.0f32,
-                1.0f32, 0.0f32,
-                1.0f32, 1.0f32,
-
-                1.0f32, 1.0f32,
-                0.0f32, 1.0f32,
+                0.0f32, 0.0f32, 1.0f32, 0.0f32, 1.0f32, 1.0f32, 1.0f32, 1.0f32, 0.0f32, 1.0f32,
                 0.0f32, 0.0f32,
             ],
-            init_complete: false
-        }
-    }
-    pub fn init(&mut self){
-        unsafe {
-            gl::GenBuffers(1, &mut self.quad_vbo);
-            gl::GenBuffers(1, &mut self.data_vbo);
-            gl::GenVertexArrays(1, &mut self.vao);
-            gl::Disable(gl::CULL_FACE);
-            gl::BindVertexArray(self.vao);
-            gl::BindBuffer(gl::ARRAY_BUFFER, self.quad_vbo);
-
-            gl::VertexAttribPointer(0,
-                2,
-                gl::FLOAT,
-                gl::FALSE,
-                0,
-                0 as *const c_void
-            );
-            gl::EnableVertexAttribArray(0);
-
-            gl::BindBuffer(gl::ARRAY_BUFFER, self.data_vbo);
-
-            gl::VertexAttribPointer(
-                1,
-                2,
-                gl::FLOAT,
-                gl::FALSE,
-                 0, //size_of<ElementData>(),
-                0 as *const c_void
-            );
+            init_complete: false,
         }
     }
 }
