@@ -1,0 +1,18 @@
+
+[package]
+name = "teste"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+name = "interface"
+path = "./lib/lib.rs"
+
+[[bin]]
+name = "exemplo"
+path = "./bin/main.rs"
+
+
+[dependencies]
+glfw = "0.63"
+gl = "0.14"
