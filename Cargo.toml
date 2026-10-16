@@ -16,3 +16,4 @@ path = "./bin/main.rs"
 [dependencies]
 glfw = "0.63"
 gl = "0.14"
+nalgebra-glm = "0.21.0"
