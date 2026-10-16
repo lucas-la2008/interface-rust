@@ -2,9 +2,7 @@ use glfw::{
     Context, Glfw, GlfwReceiver, PWindow, WindowEvent
 };
 
-use std::error;
-
-struct Renderer;
+use super::renderer::Renderer;
 
 fn error_callback(error:glfw::Error, desc:String){
     panic!("GLFW error: {} description: {}", error,desc)
@@ -29,7 +27,7 @@ impl App{
             window,
             main_glfw,
             event,
-            loader: Renderer
+            loader: Renderer::new()
         }
     }
 
