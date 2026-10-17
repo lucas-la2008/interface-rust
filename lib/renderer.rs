@@ -44,7 +44,7 @@ pub struct Renderer {
 impl Renderer {
     pub fn new() -> Renderer {
         Renderer {
-            projection: glm::ortho(0.0f32, 1920.0f32, 1080.0f32, 0.0f32, 0.0f32, 0.0f32),
+            projection: glm::ortho(0.0f32, 0.0f32, 0.0f32, 0.0f32, 0.0f32, 0.0f32),
             quad_vbo: 0,
             data_vbo: 0,
             vao: 0,
@@ -60,4 +60,22 @@ impl Renderer {
             init_complete: false,
         }
     }
+
+    pub fn resize(&mut self, width: i32, height:i32){
+        self.projection = glm::ortho(0.0f32, 1920.0f32, 1080.0f32, 0.0f32, 0.0f32, 0.0f32);
+        unsafe {
+            gl::Viewport(0,0,width,height);
+        
+            if self.shader_program != 0{
+                gl::UseProgram(self.shader_program);
+                gl::UniformMatrix4fv(
+                    self.projection_location,
+                    1,
+                    gl::FALSE,
+                    self.projection.as_ptr()
+                );
+            }
+        }
+    }
+
 }
