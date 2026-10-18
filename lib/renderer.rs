@@ -1,8 +1,11 @@
 mod renderer_init;
 
-use glm::Mat4;
 use nalgebra_glm as glm;
+use glm::Mat4;
 
+use crate::elements::base_object::BaseObject;
+
+#[allow(unused)]
 pub struct ElementData {
     size_x: f32,
     size_y: f32,
@@ -78,4 +81,70 @@ impl Renderer {
         }
     }
 
+    pub fn render(&mut self){
+        if !self.init_complete{
+            panic!("Renderer initialization incomplete");
+        }
+    
+        if self.quad_vbo == 0 || self.vao== 0 || self.data_vbo == 0{
+            panic!("Vertices buffer not initialized");
+        }
+        unsafe{
+        gl::ClearColor(0.0f32,0.0f32,0.0f32,0.0f32);
+        gl::Clear(gl::COLOR_BUFFER_BIT);
+        gl::UseProgram(self.shader_program);
+        
+            gl::BindVertexArray(self.vao);
+        
+            gl::DrawArraysInstanced(
+                gl::TRIANGLES,
+                0,
+                6,
+                self.elements_count as i32
+            );
+        
+            gl::UseProgram(0);
+        }
+    }
+
+    pub fn load(&mut self, elements: &Vec<Box<dyn BaseObject>> ){
+        let mut temp: Vec<ElementData> = Vec::new();
+        temp.reserve(elements.len());
+        for element in elements{
+            
+            let style = element.get_style();
+            if !style.visible{
+                continue;
+            }
+            
+            let position = element.get_position();
+            let size = element.get_size();
+            
+            temp.push(ElementData{
+                size_x: size.x,
+                size_y:size.y,
+                position_x: position.x,
+                position_y: position.y,
+                color_x: style.color.x,
+                color_y: style.color.y,
+                color_z: style.color.z,
+                color_a: style.color.w,
+                border_color_x: style.border_color.x,
+                border_color_y: style.border_color.y,
+                border_color_z: style.border_color.z,
+                border_color_a: style.border_color.w,
+                border_size: style.border_size
+            });
+            self.elements_count += 1;
+        }
+        unsafe{
+            gl::BindBuffer(gl::ARRAY_BUFFER, self.data_vbo);
+            gl::BufferData(
+                gl::ARRAY_BUFFER,
+                (temp.len() * core::mem::size_of::<ElementData>()) as isize,
+                temp.as_ptr().cast(),
+                gl::DYNAMIC_DRAW
+            );
+        }
+    }
 }

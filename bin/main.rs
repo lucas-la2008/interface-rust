@@ -1,6 +1,15 @@
-use interface::app::App;
+use interface::{
+    app::App, elements::button::Button
+};
 
 fn main() {
-    let mut main: App = App::new("Ola", 200, 200);
+    let mut main = App::new("Ola", 200, 200);
+    
+    let button = main.create_element::<Button>();
+    button.set_position(0.0, 0.0);
+    button.set_size(100.0, 100.0);
+    button.set_color(255.0, 0.0, 0.0, 1.0);
+    button.set_visibility(true);
+    main.config();
     main.run();
 }
