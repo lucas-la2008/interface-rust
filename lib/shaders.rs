@@ -1,6 +1,5 @@
-use std::ffi::CStr;
 
-const VERTEX_SHADER: &CStr = cr#"
+pub const VERTEX_SHADER_SOURCE: &str = r#"
 #version 330 core
 
 uniform mat4 projection;
@@ -30,10 +29,8 @@ void main(){
   localPos = aPos;
   elementSize = aSize;
 }"#;
-const VERTEX_SHADER_PTR: *const i8 = VERTEX_SHADER.as_ptr();
-pub const VERTEX_SHADER_PTR_PTR: *const *const i8 = &VERTEX_SHADER_PTR;
 
-const FRAGMENT_SHADER: &CStr = cr#"
+pub const FRAGMENT_SHADER_SOURCE: &str = r#"
 #version 330 core
 
 flat in vec4 vertexColor;
@@ -56,5 +53,3 @@ void main() {
         fragColor = vec4(vertexColor.x/255.0,vertexColor.y/255.0,vertexColor.z/255.0,vertexColor.w);
     }   
 }"#;
-const FRAGMENT_SHADER_PTR: *const i8 = FRAGMENT_SHADER.as_ptr();
-pub const FRAGMENT_SHADER_PTR_PTR: *const *const i8 = &FRAGMENT_SHADER_PTR;

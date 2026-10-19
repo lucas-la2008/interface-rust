@@ -6,6 +6,7 @@ use glm::Mat4;
 use crate::elements::base_object::BaseObject;
 
 #[allow(unused)]
+#[repr(C)]
 pub struct ElementData {
     size_x: f32,
     size_y: f32,
@@ -57,7 +58,12 @@ impl Renderer {
             projection_location: 0,
             elements_count: 0,
             quad_vertices: [
-                0.0f32, 0.0f32, 1.0f32, 0.0f32, 1.0f32, 1.0f32, 1.0f32, 1.0f32, 0.0f32, 1.0f32,
+                0.0f32, 0.0f32,
+                1.0f32, 0.0f32,
+                1.0f32, 1.0f32,
+
+                1.0f32, 1.0f32,
+                0.0f32, 1.0f32,
                 0.0f32, 0.0f32,
             ],
             init_complete: false,
@@ -79,6 +85,7 @@ impl Renderer {
                 );
             }
         }
+        println!("Resize chamado")
     }
 
     pub fn render(&mut self){
@@ -90,7 +97,7 @@ impl Renderer {
             panic!("Vertices buffer not initialized");
         }
         unsafe{
-        gl::ClearColor(0.0f32,0.0f32,0.0f32,0.0f32);
+        gl::ClearColor(0.0,0.0,0.0,1.0);
         gl::Clear(gl::COLOR_BUFFER_BIT);
         gl::UseProgram(self.shader_program);
         
@@ -107,9 +114,8 @@ impl Renderer {
         }
     }
 
-    pub fn load(&mut self, elements: &Vec<Box<dyn BaseObject>> ){
-        let mut temp: Vec<ElementData> = Vec::new();
-        temp.reserve(elements.len());
+    pub fn load(&mut self, elements: &[Box<dyn BaseObject>] ){
+        let mut temp: Vec<ElementData> = Vec::with_capacity(elements.len());
         for element in elements{
             
             let style = element.get_style();
@@ -135,13 +141,13 @@ impl Renderer {
                 border_color_a: style.border_color.w,
                 border_size: style.border_size
             });
-            self.elements_count += 1;
         }
+        self.elements_count = temp.len();
         unsafe{
             gl::BindBuffer(gl::ARRAY_BUFFER, self.data_vbo);
             gl::BufferData(
                 gl::ARRAY_BUFFER,
-                (temp.len() * core::mem::size_of::<ElementData>()) as isize,
+                (self.elements_count * std::mem::size_of::<ElementData>()) as isize,
                 temp.as_ptr().cast(),
                 gl::DYNAMIC_DRAW
             );
